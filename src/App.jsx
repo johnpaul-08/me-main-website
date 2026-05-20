@@ -22,6 +22,8 @@ import {
   SponsorModal,
 } from "./components";
 import { translations } from "./translations";
+import { AdminRouter } from './admin';
+
 
 // --- Accessibility Constants for maintainability ---
 const FONT_SIZE_KEYS = ['small', 'normal', 'large', 'xlarge'];
@@ -34,6 +36,11 @@ const FONT_SIZE_CLASSES = {
 // ----------------------------------------------------
 
 function App() {
+  if (window.location.hash === '#/admin' || window.location.hash.startsWith('#/admin/'))
+    {
+    return <AdminRouter />;
+    }
+
   const missionRef = useRef(null);
   const faqsRef = useRef(null);
   const contactRef = useRef(null);
