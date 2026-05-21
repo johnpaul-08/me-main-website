@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { FaPlus, FaEdit, FaTrash, FaImages } from 'react-icons/fa';
 import AdminHeader from './AdminHeader';
 
-const AdminGallery = () => {
+const AdminGallery = ({ language = 'en', onLanguageClick }) => {
   const [gallery, setGallery] = useState([
     {
       id: 1,
@@ -13,6 +13,7 @@ const AdminGallery = () => {
   ]);
 
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState({
     title: '',
     url: '',
@@ -26,6 +27,32 @@ const AdminGallery = () => {
     }
   };
 
+  const handleEditImage = () => {
+    if (formData.title && formData.url && editingId) {
+      setGallery(gallery.map(img => 
+        img.id === editingId ? { ...formData, id: editingId, uploadDate: img.uploadDate } : img
+      ));
+      setFormData({ title: '', url: '' });
+      setEditingId(null);
+      setIsFormOpen(false);
+    }
+  };
+
+  const handleStartEdit = (image) => {
+    setFormData({
+      title: image.title,
+      url: image.url,
+    });
+    setEditingId(image.id);
+    setIsFormOpen(true);
+  };
+
+  const handleCancelEdit = () => {
+    setFormData({ title: '', url: '' });
+    setEditingId(null);
+    setIsFormOpen(false);
+  };
+
   const handleDeleteImage = (id) => {
     setGallery(gallery.filter(img => img.id !== id));
   };
@@ -37,7 +64,7 @@ const AdminGallery = () => {
 
   return (
     <div className="flex h-screen bg-gray-100 flex-col">
-      <AdminHeader onMenuClick={() => {}} adminName="Administrator" />
+      <AdminHeader onMenuClick={() => {}} adminName="Administrator" language={language} onLanguageClick={onLanguageClick} />
       
       <main className="flex-1 overflow-auto flex flex-col">
           <div className="flex-1 max-w-6xl mx-auto w-full p-6 lg:p-8">
@@ -48,17 +75,19 @@ const AdminGallery = () => {
               </h1>
               <button
                 onClick={() => setIsFormOpen(!isFormOpen)}
-                className="flex items-center space-x-2 bg-amber-700 hover:bg-amber-800 text-white px-4 py-2 rounded-lg transition"
+                className="flex items-center space-x-2 bg-[#963D07] hover:opacity-90 text-white px-4 py-2 rounded-[24px] transition"
               >
                 <FaPlus />
                 <span>Add Photo</span>
               </button>
             </div>
 
-            {/* Add Image Form */}
+            {/* Add/Edit Image Form */}
             {isFormOpen && (
               <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-                <h2 className="text-xl font-bold text-gray-900 mb-4">Upload New Photo</h2>
+                <h2 className="text-xl font-bold text-gray-900 mb-4">
+                  {editingId ? 'Edit Photo' : 'Upload New Photo'}
+                </h2>
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -88,14 +117,14 @@ const AdminGallery = () => {
                   </div>
                   <div className="flex space-x-3">
                     <button
-                      onClick={handleAddImage}
-                      className="flex-1 bg-amber-700 hover:bg-amber-800 text-white px-4 py-2 rounded-lg transition font-medium"
+                      onClick={editingId ? handleEditImage : handleAddImage}
+                      className="flex-1 bg-[#963D07] hover:opacity-90 text-white px-4 py-2 rounded-[24px] transition font-medium"
                     >
-                      Upload Photo
+                      {editingId ? 'Update Photo' : 'Upload Photo'}
                     </button>
                     <button
-                      onClick={() => setIsFormOpen(false)}
-                      className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-900 px-4 py-2 rounded-lg transition font-medium"
+                      onClick={handleCancelEdit}
+                      className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-900 px-4 py-2 rounded-[24px] transition font-medium"
                     >
                       Cancel
                     </button>
@@ -107,7 +136,7 @@ const AdminGallery = () => {
             {/* Gallery Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {gallery.map(image => (
-                <div key={image.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition">
+                <div key={image.id} className="bg-white rounded-[24px] shadow-md overflow-hidden hover:shadow-lg transition">
                   <div className="w-full h-48 bg-gray-200 flex items-center justify-center">
                     <img
                       src={image.url}
@@ -122,12 +151,15 @@ const AdminGallery = () => {
                     <h3 className="text-lg font-bold text-gray-900">{image.title}</h3>
                     <p className="text-sm text-gray-500 mt-2">Uploaded: {image.uploadDate}</p>
                     <div className="flex space-x-2 mt-4">
-                      <button className="flex-1 p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition flex items-center justify-center">
+                      <button 
+                        onClick={() => handleStartEdit(image)}
+                        className="flex-1 p-2 text-blue-600 hover:bg-blue-50 rounded-[24px] transition flex items-center justify-center"
+                      >
                         <FaEdit />
                       </button>
                       <button
                         onClick={() => handleDeleteImage(image.id)}
-                        className="flex-1 p-2 text-red-600 hover:bg-red-50 rounded-lg transition flex items-center justify-center"
+                        className="flex-1 p-2 text-red-600 hover:bg-red-50 rounded-[24px] transition flex items-center justify-center"
                       >
                         <FaTrash />
                       </button>
@@ -144,15 +176,6 @@ const AdminGallery = () => {
             )}
           </div>
         </main>
-        
-        {/* Footer */}
-        <footer className="bg-gray-100 border-t border-gray-200">
-          <div className="max-w-6xl mx-auto px-6 lg:px-8 py-6 text-center">
-            <p className="text-sm text-gray-600">
-              © 2024 Mind Empowered. All rights reserved.
-            </p>
-          </div>
-        </footer>
     </div>
   );
 };

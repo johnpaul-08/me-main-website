@@ -13,3 +13,4 @@ export { default as DonateModal } from './DonateModal';
 export { default as WhoAmI } from './WhoAmI';
 export { default as SponsorModal } from './SponsorModal';
 export { default as SponsorSection } from './SponsorSection';
+export { default as CalendarPopup } from './CalendarPopup';

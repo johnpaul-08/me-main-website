@@ -3,7 +3,7 @@ import { FaPlus, FaEdit, FaTrash, FaUsers } from 'react-icons/fa';
 import AdminHeader from './AdminHeader';
 
 
-const AdminMentors = () => {
+const AdminMentors = ({ language = 'en', onLanguageClick }) => {
   const [mentors, setMentors] = useState([
     {
       id: 1,
@@ -15,6 +15,7 @@ const AdminMentors = () => {
   ]);
 
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState({
     name: '',
     title: '',
@@ -30,6 +31,34 @@ const AdminMentors = () => {
     }
   };
 
+  const handleEditMentor = () => {
+    if (formData.name && formData.title && formData.email && editingId) {
+      setMentors(mentors.map(mentor => 
+        mentor.id === editingId ? { ...formData, id: editingId } : mentor
+      ));
+      setFormData({ name: '', title: '', email: '', image: '' });
+      setEditingId(null);
+      setIsFormOpen(false);
+    }
+  };
+
+  const handleStartEdit = (mentor) => {
+    setFormData({
+      name: mentor.name,
+      title: mentor.title,
+      email: mentor.email,
+      image: mentor.image,
+    });
+    setEditingId(mentor.id);
+    setIsFormOpen(true);
+  };
+
+  const handleCancelEdit = () => {
+    setFormData({ name: '', title: '', email: '', image: '' });
+    setEditingId(null);
+    setIsFormOpen(false);
+  };
+
   const handleDeleteMentor = (id) => {
     setMentors(mentors.filter(mentor => mentor.id !== id));
   };
@@ -41,7 +70,7 @@ const AdminMentors = () => {
 
   return (
     <div className="flex h-screen bg-gray-100 flex-col">
-      <AdminHeader onMenuClick={() => {}} adminName="Administrator" />
+      <AdminHeader onMenuClick={() => {}} adminName="Administrator" language={language} onLanguageClick={onLanguageClick} />
       
       <main className="flex-1 overflow-auto flex flex-col">
           <div className="flex-1 max-w-6xl mx-auto w-full p-6 lg:p-8">
@@ -52,17 +81,19 @@ const AdminMentors = () => {
               </h1>
               <button
                 onClick={() => setIsFormOpen(!isFormOpen)}
-                className="flex items-center space-x-2 bg-amber-700 hover:bg-amber-800 text-white px-4 py-2 rounded-lg transition"
+                className="flex items-center space-x-2 bg-[#963D07] hover:opacity-90 text-white px-4 py-2 rounded-[24px] transition"
               >
                 <FaPlus />
                 <span>Add Mentor</span>
               </button>
             </div>
 
-            {/* Add Mentor Form */}
+            {/* Add/Edit Mentor Form */}
             {isFormOpen && (
               <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-                <h2 className="text-xl font-bold text-gray-900 mb-4">Add New Mentor</h2>
+                <h2 className="text-xl font-bold text-gray-900 mb-4">
+                  {editingId ? 'Edit Mentor' : 'Add New Mentor'}
+                </h2>
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -118,14 +149,14 @@ const AdminMentors = () => {
                   </div>
                   <div className="flex space-x-3">
                     <button
-                      onClick={handleAddMentor}
-                      className="flex-1 bg-amber-700 hover:bg-amber-800 text-white px-4 py-2 rounded-lg transition font-medium"
+                      onClick={editingId ? handleEditMentor : handleAddMentor}
+                      className="flex-1 bg-[#963D07] hover:opacity-90 text-white px-4 py-2 rounded-[24px] transition font-medium"
                     >
-                      Add Mentor
+                      {editingId ? 'Update Mentor' : 'Add Mentor'}
                     </button>
                     <button
-                      onClick={() => setIsFormOpen(false)}
-                      className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-900 px-4 py-2 rounded-lg transition font-medium"
+                      onClick={handleCancelEdit}
+                      className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-900 px-4 py-2 rounded-[24px] transition font-medium"
                     >
                       Cancel
                     </button>
@@ -168,7 +199,10 @@ const AdminMentors = () => {
                         <td className="px-6 py-4 text-gray-700">{mentor.email}</td>
                         <td className="px-6 py-4">
                           <div className="flex space-x-2">
-                            <button className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition">
+                            <button 
+                              onClick={() => handleStartEdit(mentor)}
+                              className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition"
+                            >
                               <FaEdit />
                             </button>
                             <button
@@ -193,15 +227,6 @@ const AdminMentors = () => {
             )}
           </div>
         </main>
-        
-        {/* Footer */}
-        <footer className="bg-gray-100 border-t border-gray-200">
-          <div className="max-w-6xl mx-auto px-6 lg:px-8 py-6 text-center">
-            <p className="text-sm text-gray-600">
-              © 2024 Mind Empowered. All rights reserved.
-            </p>
-          </div>
-        </footer>
     </div>
   );
 };

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { FaPlus, FaEdit, FaTrash, FaHeart, FaStar } from 'react-icons/fa';
 import AdminHeader from './AdminHeader';
 
-const AdminTestimonials = () => {
+const AdminTestimonials = ({ language = 'en', onLanguageClick }) => {
   const [testimonials, setTestimonials] = useState([
     {
       id: 1,
@@ -14,6 +14,7 @@ const AdminTestimonials = () => {
   ]);
 
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState({
     author: '',
     content: '',
@@ -28,6 +29,33 @@ const AdminTestimonials = () => {
     }
   };
 
+  const handleEditTestimonial = () => {
+    if (formData.author && formData.content && editingId) {
+      setTestimonials(testimonials.map(t => 
+        t.id === editingId ? { ...formData, id: editingId, date: t.date } : t
+      ));
+      setFormData({ author: '', content: '', rating: 5 });
+      setEditingId(null);
+      setIsFormOpen(false);
+    }
+  };
+
+  const handleStartEdit = (testimonial) => {
+    setFormData({
+      author: testimonial.author,
+      content: testimonial.content,
+      rating: testimonial.rating,
+    });
+    setEditingId(testimonial.id);
+    setIsFormOpen(true);
+  };
+
+  const handleCancelEdit = () => {
+    setFormData({ author: '', content: '', rating: 5 });
+    setEditingId(null);
+    setIsFormOpen(false);
+  };
+
   const handleDeleteTestimonial = (id) => {
     setTestimonials(testimonials.filter(t => t.id !== id));
   };
@@ -39,7 +67,7 @@ const AdminTestimonials = () => {
 
   return (
     <div className="flex h-screen bg-gray-100 flex-col">
-      <AdminHeader onMenuClick={() => {}} adminName="Administrator" />
+      <AdminHeader onMenuClick={() => {}} adminName="Administrator" language={language} onLanguageClick={onLanguageClick} />
       
       <main className="flex-1 overflow-auto flex flex-col">
           <div className="flex-1 max-w-6xl mx-auto w-full p-6 lg:p-8">
@@ -50,17 +78,19 @@ const AdminTestimonials = () => {
               </h1>
               <button
                 onClick={() => setIsFormOpen(!isFormOpen)}
-                className="flex items-center space-x-2 bg-amber-700 hover:bg-amber-800 text-white px-4 py-2 rounded-lg transition"
+                className="flex items-center space-x-2 bg-[#963D07] hover:bg-opacity-90 text-white px-4 py-2 rounded-[24px] transition"
               >
                 <FaPlus />
                 <span>Add Testimonial</span>
               </button>
             </div>
 
-            {/* Add Testimonial Form */}
+            {/* Add/Edit Testimonial Form */}
             {isFormOpen && (
               <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-                <h2 className="text-xl font-bold text-gray-900 mb-4">Add New Testimonial</h2>
+                <h2 className="text-xl font-bold text-gray-900 mb-4">
+                  {editingId ? 'Edit Testimonial' : 'Add New Testimonial'}
+                </h2>
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -107,14 +137,14 @@ const AdminTestimonials = () => {
                   </div>
                   <div className="flex space-x-3">
                     <button
-                      onClick={handleAddTestimonial}
-                      className="flex-1 bg-amber-700 hover:bg-amber-800 text-white px-4 py-2 rounded-lg transition font-medium"
+                      onClick={editingId ? handleEditTestimonial : handleAddTestimonial}
+                      className="flex-1 bg-[#963D07] hover:bg-opacity-90 text-white px-4 py-2 rounded-[24px] transition font-medium"
                     >
-                      Add Testimonial
+                      {editingId ? 'Update Testimonial' : 'Add Testimonial'}
                     </button>
                     <button
-                      onClick={() => setIsFormOpen(false)}
-                      className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-900 px-4 py-2 rounded-lg transition font-medium"
+                      onClick={handleCancelEdit}
+                      className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-900 px-4 py-2 rounded-[24px] transition font-medium"
                     >
                       Cancel
                     </button>
@@ -141,7 +171,10 @@ const AdminTestimonials = () => {
                       <p className="text-sm text-gray-500">Submitted on: {testimonial.date}</p>
                     </div>
                     <div className="flex space-x-2 ml-4">
-                      <button className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition">
+                      <button 
+                        onClick={() => handleStartEdit(testimonial)}
+                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition"
+                      >
                         <FaEdit />
                       </button>
                       <button

@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { FaCalendarAlt, FaImages, FaUsers, FaHeart } from 'react-icons/fa';
 import AdminHeader from './AdminHeader';
 
-const AdminDashboard = () => {
+
+const AdminDashboard = ({ language = 'en', onLanguageClick }) => {
   const [upcomingEvents, setUpcomingEvents] = useState([
     {
       id: 1,
@@ -44,28 +45,28 @@ const AdminDashboard = () => {
       label: 'MANAGE TESTIMONIALS',
       icon: <FaHeart className="mr-2" />,
       onClick: handleManageTestimonials,
-      color: 'bg-amber-700',
+      color: 'bg-[#963D07]',
     },
     {
       id: 2,
       label: 'MANAGE PHOTO GALLERY',
       icon: <FaImages className="mr-2" />,
       onClick: handleManageGallery,
-      color: 'bg-amber-700',
+      color: 'bg-[#963D07]',
     },
     {
       id: 3,
       label: 'MANAGE MENTORS',
       icon: <FaUsers className="mr-2" />,
       onClick: handleManageMentors,
-      color: 'bg-amber-700',
+      color: 'bg-[#963D07]',
     },
   ];
 
   return (
     <div className="flex h-screen bg-gray-100 flex-col">
       {/* Header */}
-      <AdminHeader onMenuClick={() => {}} adminName={adminName} />
+      <AdminHeader onMenuClick={() => {}} adminName={adminName} language={language} onLanguageClick={onLanguageClick} />
 
       {/* Main Content Area */}
       <main className="flex-1 overflow-auto flex flex-col">
@@ -120,7 +121,7 @@ const AdminDashboard = () => {
 
               <button
                 onClick={handleManageEvents}
-                className="w-full py-3 px-4 bg-amber-700 hover:bg-amber-800 text-white font-semibold rounded-lg transition flex items-center justify-center"
+                className="w-full py-3 px-4 bg-[#963D07] hover:opacity-90 text-white font-semibold rounded-[24px] transition flex items-center justify-center"
               >
                 <FaCalendarAlt className="mr-2" />
                 MANAGE EVENTS
@@ -128,7 +129,7 @@ const AdminDashboard = () => {
             </div>
 
             {/* Other Actions Section */}
-            <div className="bg-white rounded-lg shadow-md p-6 lg:p-8">
+            <div className="bg-white rounded-[24px] shadow-md p-6 lg:p-8">
               <h2 className="text-2xl font-bold text-gray-900 mb-6">Other Actions</h2>
 
               <div className="space-y-3">
@@ -136,7 +137,7 @@ const AdminDashboard = () => {
                   <button
                     key={button.id}
                     onClick={button.onClick}
-                    className={`w-full py-3 px-4 ${button.color} hover:opacity-90 text-white font-semibold rounded-lg transition flex items-center justify-center`}
+                    className={`w-full py-3 px-4 ${button.color} hover:opacity-90 text-white font-semibold rounded-[24px] transition flex items-center justify-center`}
                   >
                     {button.icon}
                     {button.label}

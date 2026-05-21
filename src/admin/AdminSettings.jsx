@@ -3,7 +3,7 @@ import { FaCog, FaSave, FaLock } from 'react-icons/fa';
 import AdminHeader from './AdminHeader';
 
 
-const AdminSettings = () => {
+const AdminSettings = ({ language = 'en', onLanguageClick }) => {
   const [settings, setSettings] = useState({
     siteName: 'Mind Empowered',
     siteDescription: 'Empowering minds, transforming lives',
@@ -31,7 +31,7 @@ const AdminSettings = () => {
 
   return (
     <div className="flex h-screen bg-gray-100 flex-col">
-      <AdminHeader onMenuClick={() => {}} adminName="Administrator" />
+      <AdminHeader onMenuClick={() => {}} adminName="Administrator" language={language} onLanguageClick={onLanguageClick} />
       
       <main className="flex-1 overflow-auto flex flex-col">
         <div className="flex-1 max-w-4xl mx-auto w-full p-6 lg:p-8">
@@ -201,16 +201,7 @@ const AdminSettings = () => {
             </div>
           </div>
         </main>
-        
-        {/* Footer */}
-        <footer className="bg-gray-100 border-t border-gray-200">
-          <div className="max-w-4xl mx-auto px-6 lg:px-8 py-6 text-center">
-            <p className="text-sm text-gray-600">
-              © 2024 Mind Empowered. All rights reserved.
-            </p>
-          </div>
-        </footer>
-    </div>
+       </div>
   );
 };
 

@@ -22,6 +22,10 @@ import {
   SponsorModal,
 } from "./components";
 import { translations } from "./translations";
+
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Register from "./auth/Register";
+
 import { AdminRouter } from './admin';
 
 
@@ -35,12 +39,7 @@ const FONT_SIZE_CLASSES = {
 };
 // ----------------------------------------------------
 
-function App() {
-  if (window.location.hash === '#/admin' || window.location.hash.startsWith('#/admin/'))
-    {
-    return <AdminRouter />;
-    }
-
+function HomePage() {
   const missionRef = useRef(null);
   const faqsRef = useRef(null);
   const contactRef = useRef(null);
@@ -98,26 +97,6 @@ function App() {
   ];
 
   // -----------------------------
-
-  // --- Data-driven footer social links ---
-  const socialLinks = [
-    {
-      href: "https://www.instagram.com/mind.empowered/",
-      label: "Instagram",
-      icon: <svg className="w-5 h-5 lg:w-6 lg:h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fillRule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.024.06 1.378.06 3.808s-.012 2.784-.06 3.808c-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.024.048-1.378.06-3.808.06s-2.784-.012-3.808-.06c-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.048-1.024-.06-1.378-.06-3.808s.012-2.784.06-3.808c.049-1.064.218 1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 016.08 2.525c.636-.247 1.363-.416 2.427-.465C9.53 2.013 9.884 2 12.315 2zM12 7a5 5 0 100 10 5 5 0 000-10zm0 8a3 3 0 110-6 3 3 0 010 6zm5.25-9.75a1.25 1.25 0 100-2.5 1.25 1.25 0 000 2.5z" clipRule="evenodd" /></svg>
-    },
-    {
-      href: "https://www.linkedin.com/company/mind-empowered/",
-      label: "LinkedIn",
-      icon: <svg className="w-5 h-5 lg:w-6 lg:h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" /></svg>
-    },
-    {
-      href: "mailto:Mindempowered2020@gmail.com",
-      label: "Email",
-      icon: <svg className="w-5 h-5 lg:w-6 lg:h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M1.75 3h20.5c.966 0 1.75.784 1.75 1.75v14.5A1.75 1.75 0 0122.25 21H1.75A1.75 1.75 0 010 19.25V4.75C0 3.784.784 3 1.75 3zM2.5 4.5v.815l9.5 6.333 9.5-6.333V4.5a.25.25 0 00-.25-.25H2.75a.25.25 0 00-.25.25zM2.5 19.5h19v-12.03l-9.532 6.355a.75.75 0 01-.936 0L2.5 7.47V19.5z" /></svg>
-    }
-  ];
-  // ---------------------------------------
 
   const [showAccessibilityMenu, setShowAccessibilityMenu] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -823,6 +802,18 @@ function App() {
         </div>
       </footer>
     </div>
+  );
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/admin" element={<AdminRouter />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
