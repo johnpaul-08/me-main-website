@@ -37,6 +37,17 @@ const Register = () => {
 					console.error("Error uploading photo: ", error);
 					setError("Failed to upload photo. Please try again.");
 					return error;
+	const registerForm = async (e) => {
+
+		const {error: SignUpError} = await supabase.auth.signUp({
+			email: form.email,
+			password: form.password,
+			options: {
+				data: {
+					firstName: form.firstName,
+					lastName: form.lastName,
+					phone: form.phone,
+					role: "VOLUNTEER"
 				}
 				else console.log("Photo uploaded to Supabase Storage:", data);
 
